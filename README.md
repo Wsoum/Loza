@@ -1,4 +1,4 @@
-# Loza interpreter
+# Loza Interpreter
 Interpreter for the Declaration Section of a C program
 
 We’ll use 2 language tools: Lex and Yacc (or flex and bison) to accomplish this.
@@ -54,5 +54,4 @@ DuplicateIdentifierError() is called if the isDuplicate() function returns True 
 
 isValidAssignment() :  checks if the datatype which we pass in from the later part of the yacc file is the same as the current datatype of the identifier. 
 
-itoa, ftoa and ctoa are used to convert integers, floating point numbers and characters into ascii type. 
-
+itoa, ftoa and ctoa are used to convert integers, floating point numbers and characters into ascii type.
