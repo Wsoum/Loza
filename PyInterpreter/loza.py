@@ -9,7 +9,8 @@ if len(sys.argv) >= 2:
         print(error.as_string())
     elif result:
         if len(result.elements) == 1:
-            print(repr(result.elements[0]))
+            #print(repr(result.elements[0]))
+            succ = 1
         else:
             print(repr(result))
 else:
@@ -22,6 +23,7 @@ else:
             print(error.as_string())
         elif result:
             if len(result.elements) == 1:
-                print(repr(result.elements[0]))
+                #print(repr(result.elements[0]))
+                succ = 1
             else:
                 print(repr(result))
