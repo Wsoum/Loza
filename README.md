@@ -1,4 +1,4 @@
-# Loza Interpreter
+# 🌰 Loza Interpreter
 Interpreter for the Declaration Section of a Python program
 
 ## Easy to use
