@@ -7,4 +7,4 @@ Interpreter for the Declaration Section of a Python program
 loza > print("Hello World!")
 
 ## OR
-./loza code.loza
+./loza testcode.loza
