@@ -2204,6 +2204,8 @@ global_symbol_table.set("pop", BuiltInFunction.pop)
 global_symbol_table.set("extend", BuiltInFunction.extend)
 global_symbol_table.set("len", BuiltInFunction.len)
 global_symbol_table.set("run", BuiltInFunction.run)
+global_symbol_table.set("include", BuiltInFunction.run)
+global_symbol_table.set("import", BuiltInFunction.run)
 
 def run(fn, text):
   # Generate tokens
