@@ -1,0 +1,46 @@
+# This is a very useful piece of software
+
+# my comm
+
+var v1 = 5;
+var v2 = 2;
+
+if(v1==5) then
+print (v1+v2);
+end
+print ("Welcome");
+
+
+
+
+# This is a very useful piece of software
+
+#function oopify(prefix) -> prefix + "oop"
+#
+#function join(elements, separator)
+#	var result = ""
+#	var len = len(elements)
+#
+#	for i = 0 to len then
+#		var result = result + elements/i
+#		if i != len - 1 then var result = result + separator
+#	end
+#
+#	return result
+#end
+#
+#function map(elements, func)
+#	var new_elements = []
+#
+#	for i = 0 to len(elements) then
+#		append(new_elements, func(elements/i))
+#	end
+#
+#	return new_elements
+#end
+#
+#print("Greetings universe!")
+#
+#for i = 0 to 5 then
+#	print(join(map(["l", "sp"], oopify), ", "))
+#end
