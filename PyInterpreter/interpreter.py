@@ -1868,7 +1868,7 @@ class BuiltInFunction(BaseFunction):
 
     _, error = run(fn, script)
     
-    if error:
+    if error and script.strip() != "" and not script.strip().startswith("#"):
       return RTResult().failure(RTError(
         self.pos_start, self.pos_end,
         f"Failed to finish executing script \"{fn}\"\n" +
