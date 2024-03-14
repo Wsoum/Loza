@@ -12,7 +12,7 @@ sudo apt install loza
 ## Easy to use
  > loza 
 
- > print("Hello World!")
+ > \> print("Hello World!")
 
 ## OR
  > loza testcode.loza
