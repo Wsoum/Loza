@@ -1,0 +1,214 @@
+#
+# stdlib.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+@doc "Runs a python code from string"
+func python()
+    rmem exec(^)
+endfunc
+
+@doc """\
+Imports a script or a module.\n\
+Gets script/module name as string.\
+"""
+func import()
+    mem self.import_script(^)
+endfunc
+
+@doc """\
+Is like `import()`, but checks if module or script already is imported, do not imports again.\
+Gets module or script name as string.\
+"""
+func import_once()
+    mem self.import_script(^, True)
+endfunc
+
+@doc """\
+Is like `import()`, But sets `$__ismain__` to `True` for module(run mode).\
+"""
+func import_run()
+    mem self.import_script(^, False, ismain_default=True)
+endfunc
+
+@doc """\
+Is like `import_run` but checks script is already imported like `import_once`.\
+"""
+func import_run_once()
+    mem self.import_script(^, True, ismain_default=True)
+endfunc
+
+@doc """\
+Gets a Loza code as string and runs that.\
+"""
+func eval()
+    mem self.loza_eval(^)
+endfunc
+
+@doc """\
+Asserts a value, if it's not True, raises AssertError.\
+"""
+func assert($value)
+    if not $value
+        raise(Error('AssertError', 'asserting that false is true'))
+    endif
+endfunc
+
+@doc """\
+Sets a global variable.\n\
+Gets variable name as first argument and value as second.\
+"""
+func gset($name, $value=null)
+	python('self.frames[0]["vars"][' + repr($name) + '] = self.get_var("value")')
+endfunc
+
+@doc """\
+Returns a global variable. Gets variable name as string.\
+"""
+func gget($name)
+	python('self.mem = self.frames[0]["vars"][' + repr($name) + ']')
+endfunc
+
+@doc """\
+Gets a object/variable and returns type of that.\
+"""
+func typeof(*$obj)
+    $type = python("self.mem = type(self.get_var('obj'))")
+
+    if $type is ClassObject
+        $type = $obj->__theclass__->__name__
+        $type = python('self.mem = self.classes[self.get_var("type")]')
+    endif
+
+    return $type
+endfunc
+
+@doc """\
+Runs a system shell command and returns exit code.\n\
+Gets command as string and returns exit code as int.\
+"""
+func int::system(string $cmd)
+    return py_load_module('os')->system($cmd)
+endfunc
+
+@doc """\
+Loads a python file script as a python module object.\n\
+Gets script file path as string and returns loaded object.\
+"""
+func py_load_file(string $path)
+	python("import importlib.util; spec = importlib.util.spec_from_file_location('pyloadedfile', self.get_var('path')); m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m); self.mem = m")
+endfunc
+
+@doc """\
+Loads a Python standard module. \
+Gets module name as string.\
+"""
+func py_load_module(string $name)
+    return python("import " + $name + "; self.mem = " + $name)
+endfunc
+
+@doc """\
+Returns current namespace as string.\
+"""
+func string::__namespace__()
+    return python("self.mem = self.current_namespace()")
+endfunc
+
+namespace loza
+    @doc """\
+    Prints zen of Loza.\
+    """
+    func zen()
+        println('Zen of Loza\n\
+\n\
+The Zen of Loza is a collection of "guiding principles" for writing computer programs that influence the design of the Loza programming language. (Like zen of python). This fucking list is written by Mohammad Esmaeili.\n\
+\n\
+    Fucking syntax is better than beautiful syntax\n\
+    English is better than Finglish\n\
+    Lossless slow is better than loosing fast\n\
+    CatShit is better than DogShit\n\
+    DogShit is better than BullShit\n\
+    Chaos is better than peace\n\
+    Enthropy is better than order\n\
+    Crazy is better than logic\n\
+    Fun is better than boring\n\
+    Happy is better than sad\n\
+    Pashm is better than Hash\n\
+    While is better than Do-While\n\
+    Space is better than Tab\n\
+    Also tab is better than Space\n\
+    -> is better than .\n\
+    if-else is better than switch-case')
+    endfunc
+endns
+
+@doc """\
+Adds a function to shutdown event.\n\
+Shutdown event functions will be run one by one in end of program.\n\
+Gets function object as argument.\
+"""
+func register_shutdown($func)
+    python("self.shutdown_event.append(self.get_var('func'))")
+endfunc
+
+@doc "Gets a value and a list from lists. Then, works like if,\
+Example:\n\
+println match('hello', [\n\
+	['bye', 'the bye'],\n\
+	['hello', 'the hello']\n\
+])\n\
+\n\
+Output: `the hello`.\n\
+\n\
+Also you can set default option. That will be returned \
+when the passed value is not in the list (else). \
+Default value is `None`.\n\
+\n\
+Example:\n\
+println match($value, $list, default='the default value')\
+"
+func match($value, array[array] $list, $default=null)
+    $i = 0
+    while $i < len($list)
+        if $list[$i][0] == $value
+            return $list[$i][1]
+        endif
+        $i = $i + 1
+    endwhile
+
+    return $default
+endfunc
+
+@doc "Loads a Shared object (DLL) by name as string."
+func load_so(string $name)
+    return py_load_module('ctypes')->CDLL($name)
+endfunc
+
+import @stdlib.obj
+import @stdlib.io
+import @stdlib.func
+import @stdlib.class
+import @stdlib.defines
+import @stdlib.exception
+import @stdlib.debug
+
+func fopen(); endfunc
+fopen = open

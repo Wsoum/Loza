@@ -1,0 +1,59 @@
+#
+# string.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+module string working correct
+
+--file--
+
+import @string
+use string
+
+println(concat('loza', 'ak'))
+println(remove_last('loza'))
+println(remove_first('loza'))
+println(length('loza'))
+println(cut('loza', 1, 4))
+println(upcase('loza'))
+println(lowcase('LOZA'))
+println(add_last('lozaa', 'k'))
+println(add_first('ashmak', 'p'))
+println(reverse('loza'))
+println(to_str(100))
+println(type(to_str(100)))
+
+--output--
+"""loza
+lozaa
+ashmak
+7
+ash
+LOZA
+loza
+loza
+loza
+kamhsap
+100
+<class 'str'>
+"""
+

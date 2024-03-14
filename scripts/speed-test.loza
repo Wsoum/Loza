@@ -1,0 +1,69 @@
+#!/usr/bin/env loza
+#
+# speed-test.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+import @time
+
+func something(int $i)
+	return $i + 1
+endfunc
+
+$times = []
+
+$z = 0
+while $z < 10
+	$start = time.time()
+
+	$i = 0
+	while $i < 50
+		#println($i)
+		$i = something($i)
+	endwhile
+
+	$end = time.time()
+
+	$t = $end - $start
+	$times->append($t)
+
+	$z = $z + 1
+endwhile
+
+# check the average
+$sum = 0
+$i = 0
+while $i < len($times)
+	$sum = $sum + $times[$i]
+	$i = $i + 1
+endwhile
+
+$avg = $sum / len($times)
+println('Speed Average: ' + str($avg))
+
+# handle the compiled mode
+if len($argv) <= 1
+    if os.path.isfile($__dir__ + '/../dist/loza')
+        println('\nCompiled mode:')
+        system(repr($__dir__ + '/../dist/loza') + ' ' + repr($__file__) + ' 0')
+    endif
+endif
+

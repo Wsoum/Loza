@@ -1,0 +1,79 @@
+#
+# 001.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+pit engine working correct
+
+--file--
+import @pit
+
+$output = pit.run_file($__dir__ + '/tests/pit/test.html', false)
+
+print($output->strip())
+
+--output--
+"""<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    hello parsa
+    something: hi
+    hello world
+    hello {}
+    the {}
+
+    
+
+    
+    <div>test!</div>  
+    
+
+    
+    <h6>0</h6>
+    
+    <h6>1</h6>
+    
+    <h6>2</h6>
+    
+    <h6>3</h6>
+    
+    <h6>4</h6>
+    
+    <h6>5</h6>
+    
+    <h6>6</h6>
+    
+    <h6>7</h6>
+    
+    <h6>8</h6>
+    
+    <h6>9</h6>
+    
+    <h1>included {}</h1>
+    <h1>included {'foo': 'bar'}</h1>
+</body>
+</html>"""

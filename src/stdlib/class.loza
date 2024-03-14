@@ -1,0 +1,66 @@
+#
+# class.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+# The class super tools
+namespace class
+    @doc """\
+    Returns list of defined classes as list of strings(name of class).\
+    """
+    func list()
+        # returns list of classes
+        return python("self.mem = list(self.classes.keys())")
+    endfunc
+
+    @doc """\
+    Checks a class exists.\n\
+    Gets class name as string.\n\
+    Returns boolean.\
+    """
+    func bool::exists(string $name)
+        # checks a class exists or not
+        $name = str($name)
+        return $name in class.list()
+    endfunc
+
+    @doc """\
+    Deletes a class.\n\
+    Gets class name as string.\n\
+    (This Cannot delete builtin classes).\
+    """
+    func delete(string $name)
+        # deletes a class
+        $name = str($name)
+        if not class.exists($name)
+            raise(Error('ClassNotFound', 'class "' + $name + '" not found'))
+            return
+        endif
+
+        $undeletable_classes = ['Object', 'Error'] # list of undeletable classes
+        if $name in $undeletable_classes
+            raise(Error('ClassCannotBeDeleted', 'class "' + $name + '" is a builtin class and cannot be deleted'))
+        endif
+
+        # delete the class
+        python("del self.classes[self.get_var('name')]")
+    endfunc
+endns

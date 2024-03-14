@@ -1,0 +1,8 @@
+__pycache__
+/loza.spec
+/build
+/dist
+/venv
+/pylint.out
+__lozaam__
+/.idea

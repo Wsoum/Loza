@@ -1,0 +1,121 @@
+#
+# __init__.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+namespace pit
+	func include(string $path, dict $htmldata={})
+		run_file($path, True, $htmldata)
+	endfunc
+
+	func run_file(string $path, bool $realtime_run=true, dict $htmldata={})
+		$f = fopen($path, 'r')
+		$content = $f->read()
+		$f->close()
+		return run($content, $realtime_run, $path, $htmldata)
+	endfunc
+
+	func run(string $content, bool $realtime_run=false, string $path=null, dict $htmldata={})
+		$__htmldir__ = $__dir__
+		$__htmlfile__ = $__htmldir__ + '/-'
+		$content = $content->split('\n', 1)
+		if len($content) > 1
+			if $content[0]->startswith('#!/')
+				$content = $content[1]
+			else
+				$content = '\n'->join($content)
+			endif
+		else
+			$content = $content[0]
+		endif
+
+		if $path != null
+			$__htmlfile__ = os.path.abspath($path)
+			$__htmldir__ = os.path.dirname($__htmlfile__)
+		endif
+
+		$randstr_1 = '<<<therandomstringforpit' + str(time.time()) + str(random.random()) + '>>>'
+		$randstr_2 = '<<<therandomstringforpit' + str(time.time()) + str(random.random()) + '>>>'
+		$content = $content->replace('\{', $randstr_1)
+		$content = $content->replace('\}', $randstr_2)
+		$content = $content->replace('{{', '{=')
+		$content = $content->replace('}}', '}')
+		$parts = $content->split('{')
+		$i = 0
+		$new_parts = []
+		while $i < len($parts)
+			$tmp = $parts[$i]->split('}', 1)
+			if len($tmp) > 1
+				$new_parts->append([True, $tmp[0]->replace($randstr_1, '{')->replace($randstr_2, '}')])
+				$new_parts->append([False, $tmp[1]->replace($randstr_1, '{')->replace($randstr_2, '}')])
+			else
+				$new_parts->append([False, $tmp[0]->replace($randstr_1, '{')->replace($randstr_2, '}')])
+			endif
+			$i = $i + 1
+		endwhile
+		
+		$pit_i = 0
+		$pit_parts = $new_parts
+		$pit_code = ''
+		free('i')
+		free('new_parts')
+		free('parts')
+		free('content')
+		free('randstr_1')
+		free('randstr_2')
+		free('tmp')
+		while $pit_i < len($pit_parts)
+			if $pit_parts[$pit_i][0] == True
+				if $pit_parts[$pit_i][1]
+					if $pit_parts[$pit_i][1][0] == '='
+						$pit_code = $pit_code + ('\nprint(' + $pit_parts[$pit_i][1][1:] + ')')
+					else
+						$pit_code = $pit_code + ('\n' + $pit_parts[$pit_i][1])
+					endif
+				endif
+			else
+				$pit_code = $pit_code + ('\nprint(base64.b64decode("' + base64.b64encode($pit_parts[$pit_i][1]->encode())->decode() + '")->decode())')
+			endif
+			$pit_i = $pit_i + 1
+		endwhile
+
+		free('pit_i')
+		free('pit_parts')
+
+		if $realtime_run
+			eval($pit_code)
+		else
+			out_start()
+			eval($pit_code)
+			out_end()
+			return out_get_clean()
+		endif
+	endfunc
+endns
+
+if $__ismain__
+	if len($argv) > 1
+        pit.run_file($argv[1], True)
+	else
+        println('pit: File name is required')
+        exit(1)
+	endif
+endif

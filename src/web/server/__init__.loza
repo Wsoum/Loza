@@ -1,0 +1,261 @@
+#
+# server.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+namespace web; namespace server
+    class WebServer
+        func __init__(string $host, int $port=8000)
+            $this->host = $host
+            $this->port = $port
+
+            $this->do_get = null
+            $this->do_post = null
+        endfunc
+
+        func web.server.WebServer::set_get($func)
+            $this->do_get = $func
+            return $this
+        endfunc
+
+        func web.server.WebServer::set_post($func)
+            $this->do_post = $func
+            return $this
+        endfunc
+
+        func serve()
+            $py_code = '\
+def serve(host, port, do_get=None, do_post=None):\n\
+    class TheServer(http.server.BaseHTTPRequestHandler):\n\
+        def do_GET(self):\n\
+            if self.get_event != None:\n\
+                self.get_event(self)\n\
+\
+        def do_POST(self):\n\
+            if self.post_event != None:\n\
+                self.post_event(self)\n\
+\
+    tmp_TheServer = copy.deepcopy(TheServer)\n\
+    tmp_TheServer.get_event = do_get\n\
+    tmp_TheServer.post_event = do_post\n\
+    webServer = http.server.HTTPServer((host, port), tmp_TheServer)\n\
+    return webServer\n\
+self.mem = serve(self.get_var("this").host, self.get_var("this").port, self.get_var("this").do_get, self.get_var("this").do_post)\n\
+            '
+            $this->server = python($py_code)
+
+            $this->server->serve_forever()
+        endfunc
+    endclass
+endns; endns
+
+if $__ismain__
+    import @sys, @os
+
+    if '--help' in $argv
+        println('Serve a simple webserver for development environment')
+        println('')
+        println('Usage:   loza @serve <port>')
+        println('         loza @serve <host> <port>')
+        println('         loza @serve <host> <port> <directory>')
+        println('         loza @serve <host> <port> <directory> <main-script: main file is request handler>')
+        println('Example: loza @serve 8080')
+        println('         loza @serve 0.0.0.0 8080')
+        println('         loza @serve 0.0.0.0 8080 path/to/public/html')
+        println('         loza @serve 0.0.0.0 8080 path/to/public/html path/to/public/html/server.loza')
+        exit()
+    endif
+
+    $port = 8000
+    $host = 'localhost'
+    $dir = os.getcwd()
+    $main = null
+    if len($argv) > 2
+        $host = $argv[1]
+        $port = int($argv[2])
+        if len($argv) > 3
+            $dir = $argv[3]
+            if len($argv) > 4
+                $main = $argv[4]
+            endif
+        endif
+    elif len($argv) > 1
+        $port = int($argv[1])
+    endif
+
+    $server = web.server.WebServer($host, $port)
+
+    func get_handler($handler)
+        the_handler($handler, 'GET')
+    endfunc
+
+    func post_handler($handler)
+        the_handler($handler, 'POST')
+    endfunc
+
+    # a handler for POST and GET methods
+    func the_handler($handler, string $request_method)
+        $path = str($handler->path)
+        $path = $path->split('?', 1)
+        $query_string = ''
+        if len($path) > 1
+            $query_string = $path[1]
+        endif
+        $path = $path[0]
+        $has_index = false
+        if os.path.isdir($dir + '/' + $path)
+            $allowed_indexes = ['index.loza', 'index.pit', 'index.loza.html', 'html']
+            $z = 0
+            while $z < len($allowed_indexes)
+                if os.path.isfile($dir + '/' + $path + '/' + $allowed_indexes[$z])
+                    $has_index = $dir + '/' + $path + '/' + $allowed_indexes[$z]
+                    break
+                endif
+                $z = $z + 1
+            endwhile
+        endif
+        if os.path.isfile($dir + '/' + $path) or $main != null or $has_index
+            if $has_index
+                $full_path = $has_index
+            else
+                $full_path = os.path.abspath($dir + '/' + $path)
+            endif
+            $full_path = $full_path->replace('//', '/')
+            $full_path = $full_path->replace('//', '/')
+            $mime = mimetypes.guess_type($full_path)[0]
+
+            if $full_path->endswith('.loza') or $full_path->endswith('.pit') or $full_path->endswith('.loza.html') or $main != null
+                if $main != null
+                    $full_path = $main
+                endif
+                $command = [$sys.lozaexe, repr($full_path)]
+                $f = open($full_path, 'r')
+                $content = $f->read()
+                $f->close()
+                if $content->split('\n', 1)[0]->endswith('@pit') and $content->split('\n', 1)[0]->startswith('#!/')
+                    $command->insert(1, '@pit')
+                endif
+
+                # the envvars
+                $env = {
+                    "LOZAPATH": $os.env['LOZAPATH'],
+                    "REQUEST_URI": $handler->path,
+                    "REQUEST_METHOD": $request_method,
+                    "REMOTE_ADDR": $handler->client_address[0],
+                    "REMOTE_PORT": str($handler->client_address[1]),
+                    "SERVER_PORT": str($handler->server->server_port),
+                    "SERVER_SOFTWARE": 'Loza Builtin Web Server (' + $sys.lozainfo['version'] + ')',
+                    "SERVER_SIGNATURE": 'Loza Builtin Web Server (' + $sys.lozainfo['version'] + ')',
+                    'DOCUMENT_ROOT': $dir,
+                    'CONTEXT_DOCUMENT_ROOT': $dir,
+                    'SCRIPT_FILENAME': $full_path,
+                    'SCRIPT_NAME': $path,
+                    'QUERY_STRING': $query_string,
+                    "SERVER_PROTOCOL": $handler->protocol_version,
+                    "REQUEST_SCHEME": 'http',
+                    "SERVER_NAME": $host,
+                    "SERVER_ADDR": '127.0.0.1' if $host == 'localhost' else $host,
+                }
+
+                # load request headers
+                $request_headers = str($handler->headers)->strip()->split('\n')
+                $i = 0
+                while $i < len($request_headers)
+                    $key = $request_headers[$i]->split(':', 1)
+                    $value = $key[-1]
+                    $key = $key[0]
+                    $key = 'HTTP_' + $key->replace('-', '_')->upper()
+                    $env[$key] = $value->strip()
+                    $i = $i + 1
+                endwhile
+                $post_data = ''
+                if $request_method == 'POST'
+                    $post_data = $handler->rfile->read(int($env['HTTP_CONTENT_LENGTH']))
+                endif
+                $result = subprocess.Popen(' '->join($command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE, env=$env, shell=true)
+                $result = $result->communicate(input=$post_data)
+                $result = $result[0]
+                $headers = []
+                $tmp_cookies = str($result->decode())->strip()->split('\n\n', 1)[0]->strip()->split('\n')
+                $i = 0
+                $res_code = 200
+                while $i < len($tmp_cookies)
+                    $key = $tmp_cookies[$i]->split(':', 1)
+                    $value = $key[-1]
+                    $key = $key[0]
+                    if $key == 'Status'
+                        $res_code = int($value)
+                    else
+                        $headers->append([$key->strip(), $value->strip()])
+                    endif
+                    $i = $i + 1
+                endwhile
+                $i = 0
+                $handler->send_response($res_code)
+                while $i < len($headers)
+                    $handler->send_header($headers[$i][0], $headers[$i][1])
+                    $i = $i + 1
+                endwhile
+                $handler->end_headers()
+                $handler->wfile->write(
+                    str($result->decode())->strip()->split('\n\n', 1)[-1]->encode()
+                )
+                return
+            endif
+
+            try handle_file_error
+                $f = open($full_path, 'r')
+                $content = $f->read()
+                $f->read()
+            endtry
+            goto after_handle_file_error; label handle_file_error
+                $handler->send_response(403)
+                $handler->send_header("Content-type", "text/html")
+                $handler->end_headers()
+                $handler->wfile->write(bytes('403 - Access Denied', "utf-8"))
+                return
+            label after_handle_file_error
+
+            $handler->send_response(200)
+            if $mime == null
+                $mime = 'text/plain'
+            endif
+            $handler->send_header("Content-type", $mime)
+            $handler->end_headers()
+            $handler->wfile->write(bytes($content, "utf-8"))
+            return
+        else
+            $handler->send_response(404)
+            $handler->send_header("Content-type", "text/html")
+            $handler->end_headers()
+            $handler->wfile->write(bytes('404 - Not Found', "utf-8"))
+            return
+        endif
+    endfunc
+
+    # set request handlers
+    $server->set_get(get_handler)
+    $server->set_post(post_handler)
+
+    # start the server
+    println('Serving the development server on http://' + $host + ':' + str($port) + ' - Do not use this on production')
+    $server->serve()
+endif

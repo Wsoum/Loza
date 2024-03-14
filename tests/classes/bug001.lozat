@@ -1,0 +1,47 @@
+#
+# bug001.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+tests "linked class self to instances" bug
+
+--file--
+
+class Person
+    $name; $age = 10
+endclass
+
+$p1 = Person()
+$p1->age = 20
+
+$p2 = Person()
+$p2->age = 77
+
+println(self.classes['Person'].__props__)
+println($p1->age)
+println($p2->age)
+
+--output--
+"""{'__traits__': [], '__parent__': 'Object', '__name__': 'Person', '__docstring__': '', 'name': None, 'age': 10}
+20
+77
+"""

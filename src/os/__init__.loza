@@ -1,0 +1,107 @@
+#
+# os.loza
+#
+# The Loza Project
+# This Loza module is created by mehan alavi majd <mehan.alavi.majd88@gmail.com> 
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+# 
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+namespace os
+    $env = py_load_module('os')->environ
+
+    @doc """\
+    Changes program working directory to new path.\n\
+    Gets path as string.\
+    """
+    func chdir(string $dirpath)
+        py_load_module('os')->chdir($dirpath)
+    endfunc
+
+    @doc """\
+    Returns CPU count.\
+    """
+    func cpu_count()
+        return py_load_module('os')->cpu_count()
+    endfunc
+
+    @doc """\
+    Makes a directory.\n\
+    Gets directory path as string.\
+    """
+    func mkdir(string $dirpath)
+        py_load_module('os')->mkdir($dirpath)
+    endfunc
+
+    $curdir = py_load_module('os')->curdir
+    $pwd = py_load_module("os")->getcwd()
+    @doc """\
+    Kills a process.\n\
+    First argument is process ID as int.\n\
+    Second argument is the signal.\
+    """
+    func kill(int $pid, int $signal=1)
+        return py_load_module('os')->kill($pid, $signal)
+    endfunc
+
+    @doc """\
+    Removes a directory.\n\
+    Gets directory path as string.\
+    """
+    func rmdir(string $dirpath)
+        return py_load_module('os')->rmdir($dirpath)
+    endfunc
+
+    $osname = py_load_module('os')->name
+
+    $pardir = py_load_module('os')->path->pardir
+
+    @doc """\
+    Checks is a path directory.\n\
+    Gets path as string.\n\
+    Returns Boolean.\n\
+    """
+    func bool::isdir(string $dirpath)
+        return py_load_module('os')->path->isdir($dirpath)
+    endfunc
+
+    @doc """\
+    Checks is a path file.\n\
+    Gets path as string.\n\
+    Returns Boolean.\n\
+    """
+    func bool::isfile(string $path)
+        return py_load_module('os')->path->isfile($path)
+    endfunc
+
+    @doc """\
+    Checks a path exists.\n\
+    Gets path as string.\n\
+    Returns Boolean.\
+    """
+    func bool::exists(string $path)
+        return py_load_module('os')->path->exists($path)
+    endfunc
+
+    @doc """\
+    Returns program current working directory as string.\
+    """
+    func string::cwd()
+        return py_load_module('os')->getcwd()
+    endfunc
+endnamespace

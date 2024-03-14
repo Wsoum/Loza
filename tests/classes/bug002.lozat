@@ -1,0 +1,56 @@
+#
+# bug002.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+class can be initiated in the namespace
+
+--file--
+
+namespace App
+    class First
+    endclass
+endns
+
+namespace Foo
+    class Something
+        $name = 'hi there'
+    endclass
+
+    class Last
+        $hi = App.First()
+        $some = Something()
+        $some2 = Foo.Something()
+    endclass
+endns
+
+$l = Foo.Last()
+
+println($l->hi)
+println($l->some)
+println($l->some2)
+
+--output--
+"""[LozaObject name="App.First"]
+[LozaObject name="Foo.Something"]
+[LozaObject name="Foo.Something"]
+"""

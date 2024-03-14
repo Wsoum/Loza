@@ -1,0 +1,58 @@
+#
+# defines.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+@doc "Defines a name. First argument is the name and second argument is the value"
+func define(string $name, $value)
+    if is_defined($name)
+        raise Error('DefineError', 'name "' + $name + '" already defined')
+        return
+    endif
+    python("self.defines[self.get_var('name')] = self.get_var('value')")
+endfunc
+
+@doc "Returns all of defined names as a dictionary"
+func dict::all_defines()
+    return python('self.mem = self.defines')
+endfunc
+
+@doc "Gets a name and checks is defined and return boolean"
+func bool::is_defined(string $name)
+    return $name in list(all_defines()->keys())
+endfunc
+
+@doc "Deletes a defined name. Gets name as string"
+func undefine(string $name)
+    if not is_defined($name)
+        raise Error('DefineError', 'name "' + $name + '" is not defined')
+        return
+    endif
+    python("del self.defines[self.get_var('name')]")
+endfunc
+
+@doc "Re-Defines a name. If name exists, undefines that and defines new value, and if name currently not exists, defines new name"
+func redefine(string $name, $value)
+    if is_defined($name)
+        undefine($name)
+    endif
+    define($name, $value)
+endfunc

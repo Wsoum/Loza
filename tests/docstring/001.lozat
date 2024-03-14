@@ -1,0 +1,78 @@
+#
+# 001.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+docstring will be set for items
+
+--file--
+
+@doc "This is a test\n\
+\n\
+This is a docstring"
+func hello()
+    # ...
+endfunc
+
+@doc "The docstring for class"
+class Person
+    @doc "docstring for method\n\
+Other line"
+    func something()
+    endfunc
+endclass
+
+println(hello->__docstring__)
+println('')
+println(Person->__docstring__)
+println('')
+println(Person->something->__docstring__)
+
+func other
+endfunc
+
+println(other->__docstring__)
+
+@doc "\n\
+\
+\
+\n\
+hello\n\
+\n\
+"
+func hi()
+endfunc
+
+println(hi->__docstring__)
+
+--output--
+"""This is a test
+
+This is a docstring
+
+The docstring for class
+
+docstring for method
+Other line
+
+hello
+"""

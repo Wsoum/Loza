@@ -1,0 +1,131 @@
+#
+# io.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+@doc """\
+Prints a object on stdout.\
+"""
+func print(*$value)
+    mem self.print($value)
+endfunc
+
+@doc """\
+Prints a object on stdout and goes to next line.\
+"""
+func println(*$value)
+    print($value)
+    print('\n')
+endfunc
+
+func printl(*$value)
+    println($value)
+endfunc
+
+@doc """\
+Prints a object on stderr.\
+"""
+func perror(*$value)
+    mem self.print($value, file=sys.stderr)
+endfunc
+
+@doc """\
+Prints a object on a file.\n\
+First argument is the object that you want to print.\n\
+Second argument is the file that you want to print on, but is optional. default is stdout file.\
+"""
+func printf($value, $file=null)
+    if $file is null
+        $file = python("self.mem = sys.stdout")
+    endif
+
+    $file->write(str($value))
+endfunc
+
+@doc """\
+Opens the output buffer.\
+"""
+func out_start()
+    python("self.out_started = True")
+endfunc
+
+@doc """\
+Closes the output buffer.\
+"""
+func out_end()
+    python("self.out_started = False")
+endfunc
+
+@doc """\
+Clears the output buffer.\
+"""
+func out_clean()
+    python("self.out_content = ''")
+endfunc
+
+@doc """\
+Returns the output buffer as string.\
+"""
+func out_get()
+    python("self.mem = self.out_content")
+endfunc
+
+@doc """\
+Returns output buffer and clears that.\
+"""
+func out_get_clean()
+    $content = out_get()
+    out_clean()
+    return $content
+endfunc
+
+@doc """\
+Exits program.\n\
+The argument is the exit code(is optional, default is 0).\
+"""
+func exit(int $code=0)
+    python("self.exit_program(self.get_var('code'))")
+endfunc
+
+@doc """\
+Reads a input from user from stdin.\
+"""
+func string::read(string $message='')
+    print($message)
+    python("self.io_read()")
+endfunc
+
+@doc """\
+Dumps a object.\
+"""
+func var_dump($obj)
+    python("class Tmp:\n    def write(self, value):\n        current_prog.current_prog.print(str(value))\npprint.pprint(self.get_var('obj'), Tmp())")
+endfunc
+
+@doc """\
+Prints something and exits program.\n\
+The first argument is that thing you want to print(Optional,default is null).\n\
+The second argument is exit code(is optional, default is 1).\
+"""
+func die($message='', int $exit_code=1)
+    print($message)
+    exit($exit_code)
+endfunc

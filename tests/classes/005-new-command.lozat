@@ -1,0 +1,58 @@
+#
+# 005-new-command.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+the new command can make an object from class
+--file--
+class Car
+    $name
+    $color = 'red'
+endclass
+
+$my_car = Car()
+
+namespace Foo
+    class Bar
+        $title = 'the bar'
+    endclass
+
+    namespace Sub
+        class Hello
+            $say_hi = 'Hi!'
+        endclass
+    endns
+endns
+
+$my_bar = Foo.Bar()
+
+use Foo.Sub
+
+$my_hi = Hello()
+
+println($my_bar->title)
+println($my_car->color)
+
+--output--
+"""the bar
+red
+"""

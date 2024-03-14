@@ -1,0 +1,64 @@
+#
+# func-as-var.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+function can be used as variable
+
+--file--
+func hello($name)
+    println 'hello ' + $name
+endfunc
+
+hello('parsa')
+
+$myfunc = hello
+
+$myfunc('loza')
+
+func somefunc()
+    println 'hello. I has been ran'
+endfunc
+
+$myfunc = somefunc
+$myfunc()
+
+func run_the_func($func)
+    println('start')
+    $func()
+    println('finish')
+endfunc
+
+func hi()
+    println 'hello world'
+endfunc
+
+run_the_func(hi)
+
+--output--
+"""hello parsa
+hello loza
+hello. I has been ran
+start
+hello world
+finish
+"""

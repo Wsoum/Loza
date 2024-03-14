@@ -1,0 +1,66 @@
+#
+# func.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+# The function super tools
+namespace func
+    @doc """\
+    Returns list of defined functions as list of strings(name of function).\
+    """
+    func list()
+        # returns list of functions
+        return python("self.mem = list(self.functions.keys())")
+    endfunc
+
+    @doc """\
+    Checks a function exists.\n\
+    Gets function name as string.\n\
+    Returns boolean.\
+    """
+    func bool::exists(string $name)
+        # checks a function exists or not
+        $name = str($name)
+        return $name in func.list()
+    endfunc
+
+    @doc """\
+    Deletes a function.\n\
+    Gets function name as string.\n\
+    (This Cannot delete builtin functions).\
+    """
+    func delete(string $name)
+        # deletes a function
+        $name = str($name)
+        if not func.exists($name)
+            raise(Error('FunctionNotFound', 'function "' + $name + '" not found'))
+            return
+        endif
+
+        $undeletable_functions = ['func.list', 'func.delete', 'func.exists', 'gset', 'py_load_file', 'system', 'typeof', 'required', 'print', 'import', 'println', 'printl', 'import_once', 'mem', 'rmem', 'python', 'endns', 'exit', 'eval', 'raise', 'assert', 'read'] # list of undeletable functions
+        if $name in $undeletable_functions
+            raise(Error('FunctionCannotBeDeleted', 'function "' + $name + '" is a builtin function and cannot be deleted'))
+        endif
+
+        # delete the function
+        python("del self.functions[self.get_var('name')]")
+    endfunc
+endns

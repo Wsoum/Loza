@@ -1,0 +1,56 @@
+#
+# 006-prop-value-set.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+class object props can recive the value
+--file--
+
+class Foo
+    $title = 'the title'
+endclass
+
+class Human
+    $name
+    $age
+    $foo = Foo()
+endclass
+
+$someone = Human()
+$someone->name = 'hello world'
+$someone->age = 18
+
+println($someone->name)
+println($someone->foo->title)
+
+$someone->foo->title = 'new title'
+println($someone->foo->title)
+
+$someone->name = $someone->name + '.'
+println($someone->name)
+
+--output--
+"""hello world
+the title
+new title
+hello world.
+"""

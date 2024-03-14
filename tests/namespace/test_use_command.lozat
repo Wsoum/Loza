@@ -1,0 +1,61 @@
+#
+# test_use_command.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+use command is working
+
+--file--
+namespace App
+    func dosomething()
+        println 'hello world'
+    endfunc
+    $name = 'the app'
+endns
+
+namespace Second
+    func hello()
+        println 'hello'
+    endfunc
+    $test = 'the second'
+endns
+
+App.dosomething
+Second.hello
+print $App.name
+print $Second.test
+
+use App
+use Second
+
+App.dosomething
+dosomething
+Second.hello
+hello
+
+print $App.name
+print $Second.test
+print $name
+print $test
+
+--output--
+'hello world\nhello\nthe appthe secondhello world\nhello world\nhello\nhello\nthe appthe secondthe appthe second'

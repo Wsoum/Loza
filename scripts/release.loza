@@ -1,0 +1,60 @@
+#!/usr/bin/env loza
+#
+# release.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+# Release new version
+
+if len($argv) <= 1
+    println('releaser: new version argument is required')
+    exit(1)
+endif
+
+$new_version = $argv[1]
+
+if $new_version[0] == 'v'
+    $new_version = $new_version[1:]
+endif
+
+# change version number
+$f = open($__dir__ + '/../src/core/version.py', 'r')
+$content = $f->read()
+$content = $content->split('version = ')[0]
+$content = $content + 'version = \'v'
+$content = $content + $new_version
+$content = $content + '\'\n'
+$f->close()
+
+$f = open($__dir__ + '/../src/core/version.py', 'w')
+$f->write($content)
+$f->close()
+
+$f = open($__dir__ + '/../CHANGELOG.md', 'r')
+$content = $f->read()
+$date_str = datetime->date->today()
+$date_str = str($date_str->year) + '-' + str($date_str->month) + '-' + str($date_str->day)
+$content = $content->replace('## next release', '## ' + $new_version + ' (' + $date_str + ')')
+$f->close()
+
+$f = open($__dir__ + '/../CHANGELOG.md', 'w')
+$f->write($content)
+$f->close()

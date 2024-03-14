@@ -1,0 +1,48 @@
+#
+# recursive002.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+recursive functions working
+
+--file--
+
+func hello($i)
+    if $i > 1
+        println 'hello' + str($i)
+        hello($i-1)
+    endif
+endfunc
+
+hello(10)
+
+--output--
+"""hello10
+hello9
+hello8
+hello7
+hello6
+hello5
+hello4
+hello3
+hello2
+"""

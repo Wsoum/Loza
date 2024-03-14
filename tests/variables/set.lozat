@@ -1,0 +1,48 @@
+#
+# set.lozat
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+--test--
+variable defining system is working
+
+--file--
+$myvar
+$var1; $var2
+$v3; $aaa; $hoho
+$var1
+$test = 'hello'
+print $test
+print $test
+$x = 'the value'
+$y
+$a1 = 'parsa'
+$a2 = 'hello ' + $a1 + '\n'
+print $a2
+mem 'hi mem'
+$themem = ^
+func testfunc($n)
+    mem 'the func' + $n
+endfunc
+$s = testfunc('A')
+
+--output--
+'hellohellohello parsa\n'

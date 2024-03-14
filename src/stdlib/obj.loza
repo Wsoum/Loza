@@ -1,0 +1,68 @@
+#
+# obj.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+@doc """\
+Is parent of all of classes.\
+"""
+class Object
+    func __init__()
+    endfunc
+
+    func string::__str__()
+        return '[LozaObject name="' + $this->__name__ + '"]'
+    endfunc
+
+    @doc """\
+    Checks is this object instance of a class.\n\
+    Gets that class as argument(You can pass class name as string or class object).\
+    """
+    func bool::isinstanceof($class)
+        if typeof($class) != str
+            $class = $class->__name__
+        endif
+
+        return $class in $this->__inheritance_tree__ or $class in $this->__traits__
+    endfunc
+endclass
+
+@doc "Returns value of a variable by name of variable as string"
+func get()
+    return python("self.mem = self.get_var(" + repr(^) + ")")
+endfunc
+
+@doc """\
+Sets value of a variable by name of variable as first argument as string\
+And value as second argument\
+"""
+func set(string $name, $value=null)
+    python("self.frames[-3]['vars'][self.get_var('name')] = self.get_var('value')")
+endfunc
+
+func bool::isset()
+    return python('self.mem = self.variable_exists(' + repr(^) + ')')
+endfunc
+
+@doc "Makes a copy from an object and returns the copy"
+func clone($obj)
+    return copy.deepcopy($obj)
+endfunc

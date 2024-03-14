@@ -1,0 +1,166 @@
+#
+# hash.loza
+#
+# The Loza Project
+# Copyright 2020-2024 Wsoum <wosoum@gmail.com>
+# Copyright 2020-2021 parsa shahmaleki <parsampsh@gmail.com>
+#
+# This file is part of Loza.
+#
+# Loza is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# Loza is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with Loza.  If not, see <https://www.gnu.org/licenses/>.
+#########################################################################
+
+namespace hash
+    @doc """\
+    Calculates blake2b hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::blake2b(string $value)
+		py_load_module('hashlib')->blake2b($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates blake2s hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::blake2s(string $value)
+		return py_load_module('hashlib')->blake2s($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates md5 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::md5(string $value)
+		return py_load_module('hashlib')->md5($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates sha1 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::sha1(string $value)
+		return py_load_module('hashlib')->sha1($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates sha224 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::sha224(string $value)
+		return py_load_module('hashlib')->sha224($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates sha256 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::sha256(string $value)
+		return py_load_module('hashlib')->sha256($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates sha384 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::sha384(string $value)
+		return py_load_module('hashlib')->sha384($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates sha3_224 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::sha3_224(string $value)
+		return py_load_module('hashlib')->sha3_224($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates sha3_256 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::sha3_256(string $value)
+		return py_load_module('hashlib')->sha3_256($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates sha3_384 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::sha3_384(string $value)
+		return py_load_module('hashlib')->sha3_384($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates sha3_512 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::sha3_512(string $value)
+		return py_load_module('hashlib')->sha3_512($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates sha512 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+    """
+	func string::sha512(string $value)
+		return py_load_module('hashlib')->sha512($value->encode())->hexdigest()
+	endfunc
+
+    @doc """\
+    Calculates shake_128 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+        1. length\
+    """
+	func string::shake_128(string $value, int $length)
+		return py_load_module('hashlib')->shake_128(str($value).encode()).hexdigest($length)
+	endfunc
+
+    @doc """\
+    Calculates shake_256 hash\
+    \n\
+    Args:\
+        0. value: value that you want to hash\
+        1. length\
+    """
+	func string::shake_256(string $value, int $length)
+		return py_load_module('hashlib')->shake_256(str($value).encode()).hexdigest($length)
+	endfunc
+endns
