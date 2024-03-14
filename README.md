@@ -6,9 +6,9 @@
 Interpreter for the Declaration Section of a Python program
 
 ## Easy to install
-echo "deb [trusted=yes lang=none] http://os.wsoum.eu.org/packages ./" | sudo tee -a /etc/apt/sources.list.d/wsoumos_sources.list
+ > echo "deb [trusted=yes lang=none] http://os.wsoum.eu.org/packages ./" | sudo tee -a /etc/apt/sources.list.d/wsoumos_sources.list
 
-sudo apt install loza
+ > sudo apt install loza
 ## Easy to use
  > loza 
 
