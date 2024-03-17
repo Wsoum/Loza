@@ -14,7 +14,7 @@ endif
 main: compile
 
 compile:
-	@$(PYTHON) -m PyInstaller ./src/loza.py --onefile
+	@$(PYTHON) -m PyInstaller ./src/loza.py --onefile --icon=icon.ico
 
 clean:
 	@rm build/ dist/ loza.spec pylint.out -rf
